@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cashflow</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="wordmark">CF</div>
+      <button class="sidebar-close" id="sidebarClose">×</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#dashboard" class="nav-item active" data-section="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#add" class="nav-item" data-section="add">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add Entry
+      </a>
+      <a href="#history" class="nav-item" data-section="history">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+        History
+      </a>
+      <a href="#sessions" class="nav-item" data-section="sessions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><path d="M19 3v4h4"/></svg>
+        Sessions
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="session-pill" id="currentSessionLabel">Loading...</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-wordmark">CASH<span class="topbar-wordmark-flow">FLOW</span></div>
+      <div class="topbar-right">
+        <div class="session-badge" id="topSessionBadge">—</div>
+      </div>
+    </header>
+
+    <main>
+      <section id="dashboard">
+        <div class="page-title">
+          <h1>Overview</h1>
+          <p class="page-sub" id="sessionSubtitle">Current period</p>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-label">Income</span>
+            <strong class="stat-val income-val" id="totalIncome">GH₵ 0.00</strong>
+          </div>
+          <div class="stat-card stat-card--balance">
+            <span class="stat-label">Balance</span>
+            <strong class="stat-val" id="balance">GH₵ 0.00</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Expenses</span>
+            <strong class="stat-val expense-val" id="totalExpense">GH₵ 0.00</strong>
+          </div>
+        </div>
+
+        <div class="mid-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="panel-title">Spending by Category</span>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="pieChart"></canvas>
+              <div class="chart-empty" id="chartEmpty">No expenses yet</div>
+            </div>
+          </div>
+
+          <div class="panel" id="add">
+            <div class="panel-head">
+              <span class="panel-title">Add Entry</span>
+            </div>
+            <div class="type-toggle">
+              <button class="type-btn active-type" data-type="income">Income</button>
+              <button class="type-btn" data-type="expense">Expense</button>
+            </div>
+            <div class="field-group">
+              <input type="text" id="descInput" placeholder="Description" autocomplete="off"/>
+              <input type="number" id="amountInput" placeholder="Amount (GH₵)" min="0" />
+              <select id="categoryInput">
+                <option value="Food">🍽 Food</option>
+                <option value="Transport">🚌 Transport</option>
+                <option value="Rent">🏠 Rent</option>
+                <option value="Entertainment">🎬 Entertainment</option>
+                <option value="Health">💊 Health</option>
+                <option value="Salary">💼 Salary</option>
+                <option value="Freelance">💻 Freelance</option>
+                <option value="Other">📦 Other</option>
+              </select>
+              <button class="btn-primary" id="addBtn">Add Entry</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="history" class="section-block">
+        <div class="page-title">
+          <h1>Transaction History</h1>
+          <button class="btn-ghost btn-danger-ghost" id="clearBtn">Clear All</button>
+        </div>
+        <div id="entryList" class="entry-list"></div>
+      </section>
+
+      <section id="sessions" class="section-block">
+        <div class="page-title">
+          <h1>Sessions</h1>
+          <button class="btn-ghost" id="saveSessionBtn">Save &amp; New Period</button>
+        </div>
+        <p class="section-desc">Save your current data as a named period, then start fresh. Past sessions are never deleted.</p>
+
+        <div class="save-session-form" id="saveSessionForm">
+          <input type="text" id="sessionNameInput" placeholder="e.g. June 2025 / Week 1" />
+          <div class="save-row">
+            <button class="btn-primary" id="confirmSaveBtn">Save Period</button>
+            <button class="btn-ghost" id="cancelSaveBtn">Cancel</button>
+          </div>
+        </div>
+
+        <div class="sessions-list" id="sessionsList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
